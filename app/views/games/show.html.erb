@@ -1,0 +1,40 @@
+<h1>Tic Tac Toe</h1>
+
+<style>
+  .cell-button {
+    width: 100%;
+    height: 50px; 
+    border: none;
+    background: transparent;
+    padding: 0;
+    cursor: pointer;
+  }
+</style>
+
+<% if @game.status == "ongoing" %>
+  <p>Now playing: <strong><%= @game.current_turn_symbol %></strong></p>
+<% end %>
+
+<table>
+  <% @game.board.state.each_with_index do |row, i| %>
+    <tr>
+      <% row.each_with_index do |cell, j| %>
+        <td style="width:50px; height:50px; text-align:center; border:1px solid #000;">
+          <% if cell %>
+            <%= cell %>
+          <% else %>
+            <% if @game.status == "ongoing" %>
+              
+              <%= button_to " ", move_game_path(@game), params: { x: i, y: j }, class: "cell-button" %>
+            <% end %>
+          <% end %>
+        </td>
+      <% end %>
+    </tr>
+  <% end %>
+</table>
+
+<p>Status: <%= @game.status %></p>
+
+<%= link_to "New Game", new_game_path, method: :get %>
+<%= link_to "Game History", games_path %>

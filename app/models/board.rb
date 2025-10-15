@@ -45,7 +45,7 @@ class Board < ApplicationRecord
   end
 
   # ======================================================
-  # =========== LÓGICA MINIMAX CORREGIDA =================
+  # ================== LÓGICA MINIMAX  ===================
   # ======================================================
 
   def find_best_move(ai_symbol)
@@ -54,7 +54,6 @@ class Board < ApplicationRecord
     best_move = nil
 
     # La IA opera sobre una copia del estado para no modificar el tablero real
-    # ni interactuar con la base de datos durante la simulación.
     board_copy = self.state.map(&:clone)
 
     (0..2).each do |i|
@@ -80,7 +79,7 @@ class Board < ApplicationRecord
     best_move
   end
 
-  private # Todos los métodos de la IA deben ser privados
+  private 
 
   def minimax(current_board, depth, is_maximizing, ai_symbol, player_symbol)
     # Evalúa el tablero para ver si hay un ganador o un empate (caso base)

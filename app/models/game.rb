@@ -8,4 +8,7 @@ class Game < ApplicationRecord
   o_count = board.state.flatten.count("O")
   x_count <= o_count ? "X" : "O"
   end
+  def current_turn_player_name
+    current_turn_symbol == 'X' ? self.player_x.name : self.player_o.name
+  end
 end

@@ -2,14 +2,13 @@
 class GamesController < ApplicationController
   before_action :set_game, only: [:show, :move]
 
-  # Muestra la lista de juegos terminados (historial)
+  # historial
   def index
     @games = Game.where.not(status: "ongoing").order(updated_at: :desc)
   end
 
-  # Muestra el formulario para crear un nuevo juego (app/views/games/new.html.erb)
+  # formulario para crear un nuevo juego (app/views/games/new.html.erb), renderiza la vista
   def new
-    # Ahora esta acción simplemente renderiza la vista del formulario.
   end
 
   # Crea el juego con los nombres de los jugadores del formulario
@@ -29,6 +28,23 @@ class GamesController < ApplicationController
     redirect_to @game
   end
 
+  def new_vs_ai
+  end
+
+  def create_vs_ai
+    player_x = Player.find_or_create_by(name: params[:player_name], symbol: "X")
+    player_o = Player.find_or_create_by(name: "CPU", symbol: "O") 
+    board = Board.create
+    @game = Game.create(
+      player_x: player_x,
+      player_o: player_o,
+      board: board,
+      status: "ongoing",
+      vs_ai: true
+    )
+    redirect_to @game
+  end
+
   def show
     @board = @game.board
   end
@@ -37,10 +53,19 @@ class GamesController < ApplicationController
     x, y = params[:x].to_i, params[:y].to_i
     current_symbol = @game.current_turn_symbol
 
+    #movimiento del jugador
     if @game.board.place_symbol(x, y, current_symbol)
       check_game_status
-    end
 
+      #movimiento ia
+      if @game.vs_ai? && @game.status == "ongoing" && @game.current_turn_symbol == "O"
+        ai_move = @game.board.find_best_move("O")
+        if ai_move
+          @game.board.place_symbol(ai_move[0], ai_move[1], "O")
+          check_game_status
+        end
+      end
+    end
     redirect_to @game
   end
 

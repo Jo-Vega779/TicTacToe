@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_10_14_171126) do
+ActiveRecord::Schema[8.0].define(version: 2025_10_15_162029) do
   create_table "boards", force: :cascade do |t|
     t.text "state"
     t.datetime "created_at", null: false
@@ -24,6 +24,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_14_171126) do
     t.string "status"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "vs_ai", default: false
   end
 
   create_table "players", force: :cascade do |t|

@@ -12,7 +12,7 @@
 </style>
 
 <% if @game.status == "ongoing" %>
-  <p>Now playing: <strong><%= @game.current_turn_symbol %></strong></p>
+  <p>Now playing: <strong><%= @game.current_turn_player_name %></strong></p>
 <% end %>
 
 <table>
@@ -37,4 +37,5 @@
 <p>Status: <%= @game.status %></p>
 
 <%= link_to "New Game", new_game_path, method: :get %>
+<%= link_to "New Game vs AI", new_vs_ai_games_path %>
 <%= link_to "Game History", games_path %>

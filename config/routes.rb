@@ -1,7 +1,7 @@
 # config/routes.rb
 Rails.application.routes.draw do
   # La página de inicio ahora mostrará el formulario para un nuevo juego.
-  root "games#new"
+  root "games#create"
 
   # Añadimos :index y :create a las rutas de resources.
   # :index -> GET /games (Página de historial)
@@ -9,6 +9,11 @@ Rails.application.routes.draw do
   resources :games, only: [:new, :create, :show, :index] do
     member do
       post 'move'
+    end
+
+    collection do 
+      get 'new_vs_ai', to: 'games#new_vs_ai'
+      post 'create_vs_ai'
     end
   end
 

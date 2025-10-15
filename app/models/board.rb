@@ -1,146 +1,159 @@
 class Board < ApplicationRecord
-    serialize :state, type: Array, coder: JSON
+  serialize :state, type: Array, coder: JSON
 
-    after_initialize :init_board
+  after_initialize :init_board
 
-    def init_board
-        if self.state.nil? || self.state.empty?
-            self.state = Array.new(3) { Array.new(3) }
-        end
+  def init_board
+    if self.state.nil? || self.state.empty?
+      self.state = Array.new(3) { Array.new(3) }
+    end
+  end
+
+  def place_symbol(x, y, symbol)
+    return false unless valid_move?(x, y)
+    self.state[x][y] = symbol
+    save
+  end
+
+  def valid_move?(x, y)
+    x.between?(0, 2) && y.between?(0, 2) && state[x][y].nil?
+  end
+
+  def full?
+    state.flatten.none?(&:nil?)
+  end
+
+  def winner
+    # Filas
+    state.each do |row|
+      return row[0] if row.uniq.size == 1 && row[0]
     end
 
-    def place_symbol(x, y, symbol)
-        return false unless valid_move?(x, y)
-        state[x][y] = symbol
-        save
+    # Columnas
+    (0..2).each do |i|
+      col = [state[0][i], state[1][i], state[2][i]]
+      return col[0] if col.uniq.size == 1 && col[0]
     end
 
-    def valid_move?(x, y)
-        x.between?(0,2) && y.between?(0,2) && state[x][y].nil?
+    # Diagonales
+    diag1 = [state[0][0], state[1][1], state[2][2]]
+    diag2 = [state[0][2], state[1][1], state[2][0]]
+    return diag1[0] if diag1.uniq.size == 1 && diag1[0]
+    return diag2[0] if diag2.uniq.size == 1 && diag2[0]
+
+    nil
+  end
+
+  # ======================================================
+  # =========== LÓGICA MINIMAX CORREGIDA =================
+  # ======================================================
+
+  def find_best_move(ai_symbol)
+    player_symbol = (ai_symbol == 'X') ? 'O' : 'X'
+    best_score = -Float::INFINITY
+    best_move = nil
+
+    # La IA opera sobre una copia del estado para no modificar el tablero real
+    # ni interactuar con la base de datos durante la simulación.
+    board_copy = self.state.map(&:clone)
+
+    (0..2).each do |i|
+      (0..2).each do |j|
+        if board_copy[i][j].nil?
+          # Realiza un movimiento hipotético en la copia
+          board_copy[i][j] = ai_symbol
+          
+          # Llama a minimax para evaluar el movimiento
+          score = minimax(board_copy, 0, false, ai_symbol, player_symbol)
+          
+          # Deshace el movimiento en la copia
+          board_copy[i][j] = nil
+
+          if score > best_score
+            best_score = score
+            best_move = [i, j]
+          end
+        end
+      end
     end
 
-    def full?
-        state.flatten.none?(&:nil?)
+    best_move
+  end
+
+  private # Todos los métodos de la IA deben ser privados
+
+  def minimax(current_board, depth, is_maximizing, ai_symbol, player_symbol)
+    # Evalúa el tablero para ver si hay un ganador o un empate (caso base)
+    score = evaluate_board(current_board, ai_symbol, player_symbol)
+
+    # Si hay un ganador, devuelve la puntuación ajustada por la profundidad.
+    # Esto hace que la IA prefiera una victoria más rápida.
+    return score - depth if score == 10
+    return score + depth if score == -10
+
+    # Si el tablero está lleno (empate), la puntuación es 0.
+    return 0 if board_full?(current_board)
+
+    # Turno del Maximizador (IA)
+    if is_maximizing
+      best = -Float::INFINITY
+      (0..2).each do |i|
+        (0..2).each do |j|
+          if current_board[i][j].nil?
+            current_board[i][j] = ai_symbol
+            best = [best, minimax(current_board, depth + 1, false, ai_symbol, player_symbol)].max
+            current_board[i][j] = nil
+          end
+        end
+      end
+      return best
+    # Turno del Minimizador (Jugador)
+    else
+      best = Float::INFINITY
+      (0..2).each do |i|
+        (0..2).each do |j|
+          if current_board[i][j].nil?
+            current_board[i][j] = player_symbol
+            best = [best, minimax(current_board, depth + 1, true, ai_symbol, player_symbol)].min
+            current_board[i][j] = nil
+          end
+        end
+      end
+      return best
+    end
+  end
+
+  # Función de evaluación robusta que SIEMPRE devuelve un número.
+  def evaluate_board(board, ai_symbol, player_symbol)
+    lines = [
+      # Filas
+      [board[0][0], board[0][1], board[0][2]],
+      [board[1][0], board[1][1], board[1][2]],
+      [board[2][0], board[2][1], board[2][2]],
+      # Columnas
+      [board[0][0], board[1][0], board[2][0]],
+      [board[0][1], board[1][1], board[2][1]],
+      [board[0][2], board[1][2], board[2][2]],
+      # Diagonales
+      [board[0][0], board[1][1], board[2][2]],
+      [board[0][2], board[1][1], board[2][0]]
+    ]
+
+    lines.each do |line|
+      next if line.any?(&:nil?)
+      if line.uniq.size == 1
+        return 10 if line[0] == ai_symbol
+        return -10 if line[0] == player_symbol
+      end
     end
 
-    def winner 
-        #filas
-        state.each do |row|
-            return row[0] if row.all? && row.uniq.size == 1 && row[0]
-        end
+    # Si no hay ganador, la puntuación es 0 (caso neutro).
+    # Esta línea es la que previene el error 'nil'.
+    return 0
+  end
 
-        #columnas 
-        (0..2).each do |i|
-            col = [state[0][i], state[1][i], state[2][i]]
-            return col[0] if col.all? && col.uniq.size == 1 && col[0]
-        end
-
-        #diagonales
-
-        diag1 = [state[0][0], state[1][1], state[2][2]]
-        diag2 = [state[0][2], state[1][1], state[2][0]]
-        return diag1[0] if diag1.all? && diag1.uniq.size == 1 && diag1[0]
-        return diag2[0] if diag2.all? && diag2.uniq.size == 1 && diag2[0]
-        nil
-    end
-
-    # minimax logica
-
-    def find_best_move(ai_symbol)
-        best_score = -Float::INFINITY
-        best_move = nil
-        player_symbol = (ai_symbol == 'X') ? 'O' : 'X'
-        (0..2).each do |i|
-            (0..2).each do |j|
-                if self.state[i][j].nil? #si la casilla esta vacia
-                    state[i][j] = ai_symbol #haga el movimiento hipotetico
-                    score = minimax(self.state, 0, false, ai_symbol, player_symbol) #llamo a minimax
-                    state[i][j] = nil # 'Deshace' el movimiento
-                    if score > best_score
-                        best_score = score
-                        best_move = [i, j]
-                    end
-                end
-            end
-        end
-        best_move
-    end
-
-    private
-
-    def minimax(current_state, depth, is_maxi, ai_symbol, player_symbol)
-        score = evaluate(current_state, ai_symbol, player_symbol)
-        return score - depth if score == 10
-        return score + depth if score == -10
-        return 0 if board_full?(current_state)
-
-        if is_maxi
-            best = -Float::INFINITY
-            (0..2).each do |i|
-                (0..2).each do |j|
-                    if current_state[i][j].nil?
-                        current_state[i][j] = ai_symbol
-                        score = minimax(current_state, depth + 1, false, ai_symbol, player_symbol)
-                        current_state[i][j] = nil
-                        best_score = [score, best_score].max
-                    end
-                end
-            end
-            return best_score
-        else #turno del jugador (minimiza el puntaje ia)
-            best = Float::INFINITY
-            (0..2).each do |i|
-                (0..2).each do |j|
-                    if current_state[i][j].nil?
-                        current_state[i][j] = player_symbol
-                        score = minimax(current_state, depth + 1, true, ai_symbol, player_symbol)
-                        current_state[i][j] = nil
-                        best_score = [score, best_score].min
-                    end
-                end
-            end
-            return best_score
-        end
-    end
-
-    def evaluate(board_state, ai_symbol, player_symbol)
-        #filas
-        board_state.each do |row|
-            if row.uniq.size == 1 && row[0]
-                return 10 if row[0] == ai_symbol
-                return -10 if row[0] == ai_symbol
-            end
-        end
-
-        # Columnas
-        (0..2).each do |i|
-            col = [board_state[0][i], board_state[1][i], board_state[2][i]]
-            if col.uniq.size == 1 && col[0]
-                return 10 if col[0] == ai_symbol
-                return -10 if col[0] == player_symbol
-            end
-        end
-
-
-        # Diagonales
-        diag1 = [board_state[0][0], board_state[1][1], board_state[2][2]]
-        if diag1.uniq.size == 1 && diag1[0]
-            return 10 if diag1[0] == ai_symbol
-            return -10 if diag1[0] == player_symbol
-        end
-
-        diag2 = [board_state[0][2], board_state[1][1], board_state[2][0]]
-        if diag2.uniq.size == 1 && diag2[0]
-            return 10 if diag2[0] == ai_symbol
-            return -10 if diag2[0] == player_symbol
-        end
-
-        # Si no hay ganador, la puntuación es 0
-        return 0
-    end
-
-    # Un método auxiliar para verificar si un tablero (array) está lleno.
-    def board_full?(board_state)
-        board_state.flatten.none?(&:nil?)
-    end
+  # Helper que funciona con cualquier estado del tablero (no solo self.state)
+  def board_full?(board)
+    board.flatten.none?(&:nil?)
+  end
 end

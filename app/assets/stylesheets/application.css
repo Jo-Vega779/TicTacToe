@@ -1,11 +1,215 @@
 /* app/assets/stylesheets/application.css */
-body {
-  font-family: Arial, sans-serif;
-  background-color: #f8f9fa;
-  margin: 0;
-  padding: 20px;
+/* Tema oscuro y estilo de tablero inspirado en diseño moderno */
+:root{
+  --bg: #071021; /* fondo principal */
+  --panel: #06131a; /* panel del tablero */
+  --accent: #27c6b2; /* teal brillante */
+  --muted: #6b7680;
+  --card: #08171b;
 }
 
-h1, h2, h3 {
-  color: #333;
+html, body {
+  height: 100%;
 }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  background: radial-gradient(1200px 600px at 10% 10%, rgba(40,60,70,0.12), transparent), var(--bg);
+  color: #e6eef2;
+  margin: 0;
+  padding: 40px 20px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Contenedor principal (coincide con la estructura de layout) */
+.container {
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: 48px;
+  margin: 0 0 24px 0;
+  font-weight: 700;
+  letter-spacing: -1px;
+  color: #ffffff;
+  text-shadow: 0 6px 18px rgba(0,0,0,0.6);
+}
+
+/* Tablero (específico): evita afectar otras tablas como historial */
+.board-table {
+  margin: 20px auto 28px auto;
+  border-collapse: separate;
+  border-spacing: 12px; /* espacio entre celdas para efecto "card" */
+}
+
+/* Forzar comportamiento de tabla sólo para board-table (previene que otras tablas colapsen)
+   Esto asegura que tr/td se rendericen como filas y celdas en vez de bloques verticales */
+.board-table { display: table; }
+.board-table tr { display: table-row; }
+.board-table .board-cell { display: table-cell; }
+
+.board-table .board-cell {
+  width: 120px;
+  height: 120px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02));
+  border-radius: 14px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.02), 0 6px 24px rgba(2,10,12,0.5);
+  vertical-align: middle;
+  position: relative;
+  border: 2px solid rgba(39,198,178,0.16);
+}
+
+.board-table .cell-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.board-table .cell-button {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  font-size: 46px;
+  color: #e6eef2;
+}
+
+/* Símbolos X/O grandes y con efecto dentro de board */
+.board-table .board-cell > * {
+  font-size: 56px;
+  font-weight: 800;
+  color: #e6eef2;
+  text-shadow: 0 6px 18px rgba(0,0,0,0.6);
+}
+
+/* bordes más visibles con acento alrededor de cada celda */
+.board-table .board-cell::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 14px;
+  pointer-events: none;
+  box-shadow: 0 0 0 2px rgba(39,198,178,0.06) inset;
+}
+
+/* Estado cuando la celda está vacía (hover) */
+.board-table .cell-button:hover {
+  background: linear-gradient(180deg, rgba(39,198,178,0.06), rgba(0,0,0,0));
+  border-radius: 10px;
+}
+
+/* Asegura que el form y button generados por button_to ocupen la celda completa */
+.board-table .board-cell form {
+  width: 100%;
+  height: 100%;
+}
+.board-table .board-cell form button {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  background: transparent;
+  border: none;
+}
+
+/* Indicador de jugador activo debajo del tablero */
+.players {
+  display: flex;
+  justify-content: center;
+  gap: 48px;
+  margin-top: 8px;
+  align-items: center;
+}
+
+.player {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+}
+
+.player .token {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 22px;
+  box-shadow: 0 8px 18px rgba(0,0,0,0.6);
+}
+
+.player.x .token { background: rgba(255,255,255,0.04); border: 3px solid rgba(255,255,255,0.06); color: #f45d6c }
+.player.o .token { background: rgba(255,255,255,0.02); border: 3px solid rgba(39,198,178,0.18); color: var(--accent) }
+
+.player.active { color: #e6eef2 }
+.player.active .token { box-shadow: 0 12px 30px rgba(39,198,178,0.16); transform: translateY(-4px); }
+
+.status {
+  text-align: center;
+  color: var(--muted);
+  margin-top: 12px;
+}
+
+/* Responsive: reducir tamaño de celdas en pantallas pequeñas */
+@media (max-width: 720px) {
+  .board-table .board-cell { width: 80px; height: 80px; border-radius: 10px }
+  .board-table .cell-button { font-size: 28px }
+  .board-table .board-cell > * { font-size: 34px }
+  h1 { font-size: 34px }
+}
+
+/* pequeños ajustes estéticos para enlaces */
+a { color: var(--accent) }
+
+/* Panel principal que contiene header, main y footer */
+.app-panel {
+  max-width: 980px;
+  margin: 24px auto;
+  background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02));
+  border-radius: 16px;
+  padding: 28px 32px;
+  box-shadow: 0 12px 40px rgba(2,10,12,0.6);
+  border: 1px solid rgba(39,198,178,0.04);
+}
+
+.app-header h1 { margin: 0; font-size: 44px; text-align: center }
+.app-main { padding-top: 18px }
+
+/* Tabla de historial */
+.history-container { color: #dfeff2 }
+.history-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 10px;
+}
+.history-table thead th {
+  text-align: left;
+  font-weight: 600;
+  padding: 8px 12px;
+  color: var(--muted);
+  font-size: 14px;
+}
+.history-table tbody tr {
+  background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.015));
+  border-radius: 10px;
+  display: table-row;
+  width: 100%;
+  table-layout: fixed;
+}
+.history-table td {
+  padding: 12px;
+  color: #e6eef2;
+  vertical-align: middle;
+}
+.btn-link { color: var(--accent); text-decoration: none }
+.btn.primary { background: var(--accent); color: #042023; padding: 10px 14px; border-radius: 8px; text-decoration: none }
+

@@ -44,6 +44,17 @@ h1 {
   border-spacing: 12px; /* espacio entre celdas para efecto "card" */
 }
 
+/* Layout: indicadores a los lados del tablero */
+.board-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+}
+.player-side { width: 140px; display:flex; align-items:center; justify-content:center }
+.player-side .player { flex-direction: column }
+.board-column { display:flex; flex-direction:column; align-items:center }
+
 /* Forzar comportamiento de tabla sólo para board-table (previene que otras tablas colapsen)
    Esto asegura que tr/td se rendericen como filas y celdas en vez de bloques verticales */
 .board-table { display: table; }
@@ -242,6 +253,9 @@ h1 {
   .board-table .board-cell { width: 80px; height: 80px; border-radius: 10px }
   .board-table .cell-button { font-size: 28px }
   .board-table .board-cell > * { font-size: 34px }
+  /* En pantallas pequeñas los indicadores se apilan encima y debajo del tablero */
+  .board-row { flex-direction: column; gap: 12px }
+  .player-side { width: auto }
   h1 { font-size: 34px }
 }
 

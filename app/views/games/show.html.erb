@@ -23,7 +23,6 @@
   <% end %>
 </table>
 
-<%# Mostrar status sólo si la partida ya terminó (Draw o Winner) - el modal cubrirá esto */ %>
 <% unless @game.status == "ongoing" %>
   <!-- modal resultado -->
   <div class="game-modal" role="dialog" aria-modal="true">
@@ -51,7 +50,7 @@
   <%= link_to "Game History", games_path, class: 'btn primary' %>
 </div>
 
-<!-- Indicadores de jugador usando las clases del CSS moderno -->
+<!-- Indicadores de jugador -->
 <div class="players">
   <div class="player x <%= 'active' if @game.current_turn_symbol == 'X' %>">
     <div class="token token-x">X</div>

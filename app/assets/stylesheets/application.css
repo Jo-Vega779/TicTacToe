@@ -22,7 +22,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Contenedor principal (coincide con la estructura de layout) */
+/* Contenedor principal */
 .container {
   max-width: 760px;
   margin: 0 auto;
@@ -80,7 +80,7 @@ h1 {
   height: 100%;
 }
 
-/* Estilos para tokens X y O en el tablero (colores diferentes, más redondos) */
+/* Estilos para tokens X y O */
 .board-table .token {
   display: inline-flex;
   align-items: center;
@@ -147,11 +147,6 @@ h1 {
   margin-top: 18px;
 }
 
-/* Separación extra entre botones de acción y los indicadores de jugadores */
-.players { margin-top: 34px }
-.btn.primary { background: var(--accent); color: #042023; padding: 10px 18px; border-radius: 8px; text-decoration: none }
-.btn-link { color: var(--accent); text-decoration: none }
-
 .board-table .cell-button {
   width: 100%;
   height: 100%;
@@ -182,7 +177,7 @@ h1 {
   box-shadow: 0 0 0 2px rgba(39,198,178,0.06) inset;
 }
 
-/* Estado cuando la celda está vacía (hover) */
+/* hover de celda vacia */
 .board-table .cell-button:hover {
   background: linear-gradient(180deg, rgba(39,198,178,0.06), rgba(0,0,0,0));
   border-radius: 10px;
@@ -201,7 +196,7 @@ h1 {
   border: none;
 }
 
-/* Indicador de jugador activo debajo del tablero */
+
 .players {
   display: flex;
   justify-content: center;
@@ -246,17 +241,6 @@ h1 {
   text-align: center;
   color: var(--muted);
   margin-top: 12px;
-}
-
-/* Responsive: reducir tamaño de celdas en pantallas pequeñas */
-@media (max-width: 720px) {
-  .board-table .board-cell { width: 80px; height: 80px; border-radius: 10px }
-  .board-table .cell-button { font-size: 28px }
-  .board-table .board-cell > * { font-size: 34px }
-  /* En pantallas pequeñas los indicadores se apilan encima y debajo del tablero */
-  .board-row { flex-direction: column; gap: 12px }
-  .player-side { width: auto }
-  h1 { font-size: 34px }
 }
 
 /* pequeños ajustes estéticos para enlaces */

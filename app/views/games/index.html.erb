@@ -21,7 +21,7 @@
           <td><%= game.player_o.name %></td>
           <td><%= game.status %></td>
           <td><%= game.updated_at.strftime("%Y-%m-%d %H:%M") %></td>
-          <td><%= link_to "See final board", game_path(game), class: 'btn-link' %></td>
+          <td><%= link_to "See final board", game_path(game, from: 'history'), class: 'btn-link' %></td>
         </tr>
       <% end %>
     </tbody>

@@ -32,7 +32,7 @@
       <% end %>
     </table>
 
-    <% unless @game.status == "ongoing" %>
+  <% unless @game.status == "ongoing" || params[:from] == 'history' %>
       <!-- modal resultado -->
       <div class="game-modal" role="dialog" aria-modal="true">
         <div class="panel">

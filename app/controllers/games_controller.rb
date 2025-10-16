@@ -9,17 +9,15 @@ class GamesController < ApplicationController
 
   # Página principal: muestra un tablero no interactivo hasta que se cree un juego
   def home
-    # Mostrar un tablero vacío temporal (no se guarda en DB)
     @board = Board.new
   end
 
-  # formulario para crear un nuevo juego (app/views/games/new.html.erb), renderiza la vista
+  # formulario para crear un nuevo juego, renderiza la vista
   def new
   end
 
   # Crea el juego con los nombres de los jugadores del formulario
   def create
-    # Busca el jugador por nombre, si no existe, lo crea.
     player_x = Player.find_or_create_by(name: params[:player_x_name])
     player_o = Player.find_or_create_by(name: params[:player_o_name])
     
@@ -56,7 +54,6 @@ class GamesController < ApplicationController
   end
 
   def move
-    # No permitir movimientos si la partida ya terminó
     unless @game.status == "ongoing"
       redirect_to @game and return
     end

@@ -1,7 +1,7 @@
 # config/routes.rb
 Rails.application.routes.draw do
-  # La página de inicio ahora mostrará el formulario para un nuevo juego.
-  root "games#new"
+  # La página de inicio mostrará el tablero (no interactivo) hasta que se cree un juego.
+  root "games#home"
 
   # Añadimos :index y :create a las rutas de resources.
   # :index -> GET /games (Página de historial)

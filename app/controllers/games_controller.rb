@@ -7,6 +7,12 @@ class GamesController < ApplicationController
     @games = Game.where.not(status: "ongoing").order(updated_at: :desc)
   end
 
+  # Página principal: muestra un tablero no interactivo hasta que se cree un juego
+  def home
+    # Mostrar un tablero vacío temporal (no se guarda en DB)
+    @board = Board.new
+  end
+
   # formulario para crear un nuevo juego (app/views/games/new.html.erb), renderiza la vista
   def new
   end

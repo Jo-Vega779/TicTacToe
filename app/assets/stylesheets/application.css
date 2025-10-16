@@ -225,6 +225,12 @@ h1 {
 .player.active { color: #e6eef2 }
 .player.active .token { box-shadow: 0 12px 30px rgba(39,198,178,0.16); transform: translateY(-4px); }
 
+/* Estilos para indicadores de turno (más pequeños que los tokens del tablero) */
+.players .token { width: 64px; height: 64px; border-radius: 50%; font-size: 28px }
+.players .label { margin-top: 6px; font-weight: 600 }
+.players .player.x.active .token { box-shadow: 0 8px 24px rgba(244,93,108,0.1) }
+.players .player.o.active .token { box-shadow: 0 8px 24px rgba(39,198,178,0.14) }
+
 .status {
   text-align: center;
   color: var(--muted);

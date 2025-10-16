@@ -50,6 +50,11 @@ class GamesController < ApplicationController
   end
 
   def move
+    # No permitir movimientos si la partida ya terminó
+    unless @game.status == "ongoing"
+      redirect_to @game and return
+    end
+
     x, y = params[:x].to_i, params[:y].to_i
     current_symbol = @game.current_turn_symbol
 

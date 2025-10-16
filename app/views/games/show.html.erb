@@ -1,8 +1,4 @@
-<h1>Tic Tac Toe</h1>
-
-<% if @game.status == "ongoing" %>
-  <p>Now playing: <strong><%= @game.current_turn_player_name %></strong></p>
-<% end %>
+<%# Se elimina texto redundante "Now playing:" - el indicador visual muestra el turno %>
 
 <table class="board-table">
   <% @game.board.state.each_with_index do |row, i| %>
@@ -11,7 +7,11 @@
         <td class="board-cell">
           <div class="cell-inner">
             <% if cell %>
-              <span class="token"><%= cell %></span>
+              <% if cell == "X" %>
+                <span class="token token-x">X</span>
+              <% else %>
+                <span class="token token-o">O</span>
+              <% end %>
             <% else %>
               <% if @game.status == "ongoing" %>
                 <%= button_to " ", move_game_path(@game), params: { x: i, y: j }, class: "cell-button" %>
@@ -24,11 +24,33 @@
   <% end %>
 </table>
 
-<p>Status: <%= @game.status %></p>
+<%# Mostrar status sólo si la partida ya terminó (Draw o Winner) - el modal cubrirá esto */ %>
+<% unless @game.status == "ongoing" %>
+  <!-- modal resultado -->
+  <div class="game-modal" role="dialog" aria-modal="true">
+    <div class="panel">
+      <% if @game.status == "Draw" %>
+        <div class="title">Draw</div>
+        <div class="subtitle">La partida terminó en empate.</div>
+      <% elsif @game.status.start_with?("Winner:") %>
+        <div class="title">Winner</div>
+        <div class="subtitle"><%= @game.status.sub("Winner: ", "") %></div>
+      <% else %>
+        <div class="title"><%= @game.status %></div>
+      <% end %>
 
-<%= link_to "New Game", new_game_path, method: :get %>
-<%= link_to "New Game vs AI", new_vs_ai_games_path %>
-<%= link_to "Game History", games_path %>
+      <div class="close">
+        <%= link_to "Close", game_path(@game), class: 'btn primary' %>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<div class="board-actions">
+  <%= link_to "New Game", new_game_path, class: 'btn primary' %>
+  <%= link_to "New Game vs AI", new_vs_ai_games_path, class: 'btn primary' %>
+  <%= link_to "Game History", games_path, class: 'btn primary' %>
+</div>
 
 <!-- Indicadores de jugador usando las clases del CSS moderno -->
 <div class="players">

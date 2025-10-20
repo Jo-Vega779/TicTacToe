@@ -30,9 +30,8 @@ class Board < ApplicationRecord
     end
 
     # Columnas
-    (0..2).each do |i|
-      col = [state[0][i], state[1][i], state[2][i]]
-      return col[0] if col.uniq.size == 1 && col[0]
+    state.transpose.each do |column|
+      return column[0] if column.uniq.size == 1 && column[0]
     end
 
     # Diagonales
@@ -122,7 +121,7 @@ class Board < ApplicationRecord
     end
   end
 
-  # Función de evaluación robusta que SIEMPRE devuelve un número.
+  # Función de evaluación
   def evaluate_board(board, ai_symbol, player_symbol)
     lines = [
       # Filas

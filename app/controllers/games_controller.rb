@@ -12,9 +12,6 @@ class GamesController < ApplicationController
     @board = Board.new
   end
 
-  # formulario para crear un nuevo juego, renderiza la vista
-  def new
-  end
 
   # Crea el juego con los nombres de los jugadores del formulario
   def create
@@ -32,8 +29,6 @@ class GamesController < ApplicationController
     redirect_to @game
   end
 
-  def new_vs_ai
-  end
 
   def create_vs_ai
     player_x = Player.find_or_create_by(name: params[:player_name], symbol: "X")

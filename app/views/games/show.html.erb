@@ -1,0 +1,69 @@
+
+<div class="board-row">
+  <div class="player-side left">
+    <div class="player x <%= 'active' if @game.current_turn_symbol == 'X' %>">
+      <div class="token token-x">X</div>
+      <div class="label"><%= @game.player_x.name %></div>
+    </div>
+  </div>
+
+  <div class="board-column">
+    <table class="board-table">
+      <% @game.board.state.each_with_index do |row, i| %>
+        <tr>
+          <% row.each_with_index do |cell, j| %>
+            <td class="board-cell">
+              <div class="cell-inner">
+                <% if cell %>
+                  <% if cell == "X" %>
+                    <span class="token token-x">X</span>
+                  <% else %>
+                    <span class="token token-o">O</span>
+                  <% end %>
+                <% else %>
+                  <% if @game.status == "ongoing" %>
+                    <%= button_to " ", move_game_path(@game), params: { x: i, y: j }, class: "cell-button" %>
+                  <% end %>
+                <% end %>
+              </div>
+            </td>
+          <% end %>
+        </tr>
+      <% end %>
+    </table>
+
+  <% unless @game.status == "ongoing" || params[:from] == 'history' %>
+      <!-- modal resultado -->
+      <div class="game-modal" role="dialog" aria-modal="true">
+        <div class="panel">
+          <% if @game.status == "Draw" %>
+            <div class="title">Draw</div>
+            <div class="subtitle">La partida terminó en empate.</div>
+          <% elsif @game.status.start_with?("Winner:") %>
+            <div class="title">Winner</div>
+            <div class="subtitle"><%= @game.status.sub("Winner: ", "") %></div>
+          <% else %>
+            <div class="title"><%= @game.status %></div>
+          <% end %>
+
+          <div class="close">
+            <%= link_to "Close", root_path, class: 'btn primary' %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+    <div class="board-actions">
+      <%= link_to "New Game", new_game_path, class: 'btn primary' %>
+      <%= link_to "New Game vs AI", new_vs_ai_games_path, class: 'btn primary' %>
+      <%= link_to "Game History", games_path, class: 'btn primary' %>
+    </div>
+  </div>
+
+  <div class="player-side right">
+    <div class="player o <%= 'active' if @game.current_turn_symbol == 'O' %>">
+      <div class="token token-o">O</div>
+      <div class="label"><%= @game.player_o.name %></div>
+    </div>
+  </div>
+</div>

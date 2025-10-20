@@ -1,0 +1,33 @@
+
+<div class="history-container">
+  <h2>Game History</h2>
+
+  <table class="history-table">
+    <thead>
+      <tr>
+        <th>Match ID</th>
+        <th>Player X</th>
+        <th>Player O</th>
+        <th>Result</th>
+        <th>Date</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @games.each do |game| %>
+        <tr>
+          <td><%= game.id %></td>
+          <td><%= game.player_x.name %></td>
+          <td><%= game.player_o.name %></td>
+          <td><%= game.status %></td>
+          <td><%= game.updated_at.strftime("%Y-%m-%d %H:%M") %></td>
+          <td><%= link_to "See final board", game_path(game, from: 'history'), class: 'btn-link' %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+  <div style="margin-top:18px;">
+    <%= link_to "Back", root_path, class: 'btn primary' %>
+  </div>
+</div>

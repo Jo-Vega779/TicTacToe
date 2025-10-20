@@ -1,0 +1,31 @@
+<div class="container">
+<div class="container">
+  <table class="board-table">
+    <% @board.state.each_with_index do |row, i| %>
+      <tr>
+        <% row.each_with_index do |cell, j| %>
+          <td class="board-cell">
+            <div class="cell-inner">
+              <% if cell %>
+                <% if cell == "X" %>
+                  <span class="token token-x">X</span>
+                <% else %>
+                  <span class="token token-o">O</span>
+                <% end %>
+              <% else %>
+                <!-- celda vacía, no interactiva -->
+                <span class="empty-slot"></span>
+              <% end %>
+            </div>
+          </td>
+        <% end %>
+      </tr>
+    <% end %>
+  </table>
+
+  <div class="board-actions">
+    <%= link_to "New Game", new_game_path, class: 'btn primary' %>
+    <%= link_to "New Game vs AI", new_vs_ai_games_path, class: 'btn primary' %>
+    <%= link_to "Game History", games_path, class: 'btn primary' %>
+  </div>
+</div>

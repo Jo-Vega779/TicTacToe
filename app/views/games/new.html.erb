@@ -1,0 +1,18 @@
+<h1>Who is playing?</h1>
+
+<%= form_with url: games_path, method: :post, local: true do %>
+  <div>
+    <%= label_tag :player_x_name, "Player X:" %>
+    <%= text_field_tag :player_x_name, "Player X" %>
+  </div>
+  <br>
+  <div>
+    <%= label_tag :player_o_name, "Player O:" %>
+    <%= text_field_tag :player_o_name, "Player O" %>
+  </div>
+  <br>
+  <div>
+    <%= submit_tag "Start new game", class: 'btn primary' %>
+    <%= link_to "Back", root_path, class: 'btn-link', style: 'margin-left:12px;' %>
+  </div>
+<% end %>

@@ -1,0 +1,17 @@
+<h1>New Game vs. CPU</h1>
+
+<%= form_with url: create_vs_ai_games_path, method: :post, local: true do |form| %>
+  <div>
+    <%= form.label :player_name, "Enter your name:" %>
+    <%= form.text_field :player_name, required: true %>
+  </div>
+
+  <br>
+
+  <div>
+    <%= form.submit "Start Game", class: 'btn primary' %>
+    <%= link_to "Back", root_path, class: 'btn-link', style: 'margin-left:12px;' %>
+  </div>
+<% end %>
+
+ 
